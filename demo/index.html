@@ -5274,8 +5274,11 @@ buildJsonGrid();
 /* =========================================================
    04 · Console eventi + dispatch API
    ========================================================= */
-const log = $('eventlog');
+// Self-contained (hoisted, no outer const) so it is safe to call during the
+// initial top-level setup, before the event-console block is reached.
 function logEvent(type, payload) {
+  const log = document.getElementById('eventlog');
+  if (!log) return;
   const line = document.createElement('div');
   const t = new Date().toLocaleTimeString('it-IT');
   line.innerHTML = `<span class="t">${t}</span> <span class="ev">${type}</span> ${payload !== undefined ? escHtml(JSON.stringify(payload)).slice(0, 160) : ''}`;
@@ -5283,7 +5286,7 @@ function logEvent(type, payload) {
   while (log.children.length > 200) log.firstChild.remove();
   log.scrollTop = log.scrollHeight;
 }
-const escHtml = (s) => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]);
+function escHtml(s) { return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]); }
 
 for (const type of ['cellsChanged','selectionChanged','sortChanged','filterChanged','copyEnd','pasteEnd',
                     'fillEnd','undoApplied','redoApplied','validationFailed','rowExpanded','rowCollapsed',
