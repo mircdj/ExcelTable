@@ -586,19 +586,20 @@ footer b { color: #fff; }
 <!-- ============================ GETTING STARTED ============================ -->
 <section class="doc" id="quickstart" data-group="Start">
 <h2><span class="en">Installation & Quickstart</span><span class="it">Installazione e Quickstart</span></h2>
-<p><span class="en">ExcelTable ships as a monorepo with three packages: <code>@exceltable/core</code> (framework-agnostic engine), <code>@exceltable/react</code> and <code>@exceltable/angular</code>. Packages are installed from the local folder (or from a <code>.tgz</code> produced by <code>npm pack</code>).</span>
-<span class="it">ExcelTable è un monorepo con tre pacchetti: <code>@exceltable/core</code> (motore indipendente dal framework), <code>@exceltable/react</code> e <code>@exceltable/angular</code>. I pacchetti si installano dalla cartella locale (o da un <code>.tgz</code> prodotto con <code>npm pack</code>).</span></p>
-<script type="text/plain" class="snippet" data-l="bash" data-title="terminal — install">
-# Build the core once (from the exceltable folder)
-cd exceltable && npm install
-cd packages/core
-npx esbuild src/index.ts --bundle --format=esm --outfile=dist/index.js
-npx tsc
+<p><span class="en">ExcelTable ships as a monorepo with three packages: <code>@exceltable/core</code> (framework-agnostic engine), <code>@exceltable/react</code> and <code>@exceltable/angular</code>. Install the prebuilt tarballs attached to each <a href="https://github.com/mircdj/ExcelTable/releases">GitHub Release</a> — plain <code>npm install</code>, no registry, no auth. <code>@exceltable/core</code> is a peer of the wrappers, so install it alongside whichever you use.</span>
+<span class="it">ExcelTable è un monorepo con tre pacchetti: <code>@exceltable/core</code> (motore indipendente dal framework), <code>@exceltable/react</code> e <code>@exceltable/angular</code>. Installa i tarball prebuildati allegati a ogni <a href="https://github.com/mircdj/ExcelTable/releases">GitHub Release</a> — <code>npm install</code> normale, niente registry, niente login. <code>@exceltable/core</code> è peer dei wrapper, quindi installalo insieme a quello che usi.</span></p>
+<script type="text/plain" class="snippet" data-l="bash" data-title="terminal — install (GitHub Release)">
+# set R to the release tag you want
+R=https://github.com/mircdj/ExcelTable/releases/download/v0.1.0
 
-# Install into YOUR project (pick what you need)
-npm install /path/to/exceltable/packages/core
-npm install /path/to/exceltable/packages/react      # React / Next.js
-npm install /path/to/exceltable/packages/angular    # Angular
+# Vanilla / any framework
+npm install $R/exceltable-core-0.1.0.tgz
+
+# React / Next.js  (core + react)
+npm install $R/exceltable-core-0.1.0.tgz $R/exceltable-react-0.1.0.tgz
+
+# Angular  (core + angular)
+npm install $R/exceltable-core-0.1.0.tgz $R/exceltable-angular-0.1.0.tgz
 </script>
 <h3><span class="en">60-second vanilla quickstart</span><span class="it">Quickstart vanilla in 60 secondi</span></h3>
 <p><span class="en">One container with a defined height, one constructor, done. Everything else — keyboard, clipboard, sort, filters, undo — works out of the box.</span>

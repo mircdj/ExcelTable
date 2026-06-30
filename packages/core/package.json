@@ -4,6 +4,7 @@
   "description": "Excel-style data grid core — framework agnostic, zero dependencies",
   "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist", "src/theme.css"],
   "exports": {
@@ -11,5 +12,31 @@
     "./theme.css": "./src/theme.css"
   },
   "sideEffects": ["*.css"],
-  "license": "MIT"
+  "scripts": {
+    "build": "tsc -p tsconfig.json && esbuild src/index.ts --bundle --format=esm --outfile=dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "data-grid",
+    "datagrid",
+    "grid",
+    "table",
+    "excel",
+    "spreadsheet",
+    "virtualization",
+    "typescript",
+    "xlsx",
+    "pivot"
+  ],
+  "author": "Mirco Sabatino",
+  "license": "MIT",
+  "homepage": "https://mircdj.github.io/ExcelTable/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mircdj/ExcelTable.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/mircdj/ExcelTable/issues"
+  }
 }

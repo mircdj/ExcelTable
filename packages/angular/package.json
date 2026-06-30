@@ -2,7 +2,38 @@
   "name": "@exceltable/angular",
   "version": "0.1.0",
   "description": "Angular wrapper for @exceltable/core (standalone component, zone-less rendering)",
-  "peerDependencies": { "@angular/core": ">=15" },
-  "dependencies": { "@exceltable/core": "0.1.0" },
-  "license": "MIT"
+  "scripts": {
+    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@angular/core": ">=17",
+    "@exceltable/core": "^0.1.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "data-grid",
+    "datagrid",
+    "grid",
+    "table",
+    "excel",
+    "spreadsheet",
+    "angular",
+    "standalone-component",
+    "typescript"
+  ],
+  "author": "Mirco Sabatino",
+  "license": "MIT",
+  "homepage": "https://mircdj.github.io/ExcelTable/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mircdj/ExcelTable.git",
+    "directory": "packages/angular"
+  },
+  "bugs": {
+    "url": "https://github.com/mircdj/ExcelTable/issues"
+  }
 }

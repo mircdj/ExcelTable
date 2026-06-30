@@ -54,26 +54,47 @@ A pure-TypeScript core with **zero dependencies** and a virtualized DOM renderer
 
 ## Installation
 
-> **Note:** the packages are not published to npm yet. Use ExcelTable from source as shown below. The `@exceltable/*` import paths in the examples are the intended public API once the packages are published.
+> **Note:** ExcelTable is distributed via **GitHub Releases** (prebuilt tarballs), not the public npm registry yet. Both methods below give you the exact `@exceltable/*` packages used in the examples — no registry, no auth.
 
-Clone the repository and build the core:
+### Option A — from a GitHub Release (recommended)
+
+Every tagged release attaches installable `.tgz` tarballs (built by CI). Install directly into your project with plain `npm install`:
+
+```bash
+# Vanilla / any framework
+npm install https://github.com/mircdj/ExcelTable/releases/download/v0.1.0/exceltable-core-0.1.0.tgz
+
+# React / Next.js — install core + react
+npm install \
+  https://github.com/mircdj/ExcelTable/releases/download/v0.1.0/exceltable-core-0.1.0.tgz \
+  https://github.com/mircdj/ExcelTable/releases/download/v0.1.0/exceltable-react-0.1.0.tgz
+
+# Angular — install core + angular
+npm install \
+  https://github.com/mircdj/ExcelTable/releases/download/v0.1.0/exceltable-core-0.1.0.tgz \
+  https://github.com/mircdj/ExcelTable/releases/download/v0.1.0/exceltable-angular-0.1.0.tgz
+```
+
+`@exceltable/core` is a peer of the React and Angular packages, so install it alongside whichever wrapper you use. `react`/`react-dom` (≥18) and `@angular/core` (≥17) come from your own project. Then import as usual:
+
+```ts
+import '@exceltable/core/theme.css';
+```
+
+> Pin the version in the URL to the [release](https://github.com/mircdj/ExcelTable/releases) you want. Replace `v0.1.0` with the latest tag.
+
+### Option B — build from source
 
 ```bash
 git clone https://github.com/mircdj/ExcelTable.git
 cd ExcelTable
 npm install
-cd packages/core
-npx esbuild src/index.ts --bundle --format=esm --outfile=dist/index.js
+npm run build          # builds @exceltable/core, @exceltable/react, @exceltable/angular
 ```
 
-Then reference the built bundle and stylesheet from your app:
+You can then `npm install /path/to/ExcelTable/packages/core` (and the wrappers) into your project, or pack them yourself with `npm pack`.
 
-```ts
-import { Grid } from '@exceltable/core';   // resolves to packages/core/dist/index.js
-import '@exceltable/core/theme.css';        // packages/core/src/theme.css
-```
-
-The fastest way to see it running is the [self-contained demo](demo/index.html) — open it directly in a browser, no build required.
+The fastest way to *see* it running is the [self-contained demo](demo/index.html) — open it directly in a browser, no build required.
 
 ## Quickstart
 
@@ -257,20 +278,32 @@ The documentation site is published automatically to GitHub Pages on every push 
 npm install
 ```
 
-**Build the core:**
+**Build all packages** (core → react → angular, in dependency order):
 
 ```bash
-cd packages/core
-npx tsc                                                          # type-check + declarations
-npx esbuild src/index.ts --bundle --format=esm --outfile=dist/index.js
+npm run build          # or build one: npm run build:core | build:react | build:angular
 ```
+
+| Package | Tooling | Output |
+| --- | --- | --- |
+| `@exceltable/core` | `tsc` (declarations) + `esbuild` (ESM bundle) | `packages/core/dist` |
+| `@exceltable/react` | `tsc` (JS + declarations) | `packages/react/dist` |
+| `@exceltable/angular` | `ng-packagr` (Angular Package Format, partial-Ivy) | `packages/angular/dist` |
 
 **Run tests:**
 
 ```bash
-node tests/run.mjs    # 106 tests: series, parsing, JSON inference, data pipeline,
+npm test              # 106 tests: series, parsing, JSON inference, data pipeline,
                       # undo, master/detail, custom renderers, ARIA contract
 npm run e2e           # Playwright end-to-end (mouse, keyboard, touch, clipboard, layout)
+```
+
+**Cut a release** (CI builds, tests, packs the tarballs and creates the GitHub Release):
+
+```bash
+npm version 0.2.0 --workspaces --no-git-tag-version   # bump every package
+git commit -am "release: v0.2.0"
+git tag v0.2.0 && git push --follow-tags              # triggers .github/workflows/release.yml
 ```
 
 ## Documented limits

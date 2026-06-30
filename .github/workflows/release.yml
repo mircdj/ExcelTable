@@ -1,0 +1,50 @@
+name: Release packages
+
+# Build all packages and attach installable .tgz tarballs to a GitHub Release.
+# Trigger by pushing a version tag, e.g.:
+#   npm version 1.0.0 --workspaces --no-git-tag-version   # bump versions
+#   git commit -am "release: v1.0.0" && git tag v1.0.0 && git push --follow-tags
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all packages
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+      - name: Pack tarballs
+        run: |
+          mkdir -p dist-packs
+          (cd packages/core && npm pack --pack-destination "$GITHUB_WORKSPACE/dist-packs")
+          (cd packages/react && npm pack --pack-destination "$GITHUB_WORKSPACE/dist-packs")
+          (cd packages/angular/dist && npm pack --pack-destination "$GITHUB_WORKSPACE/dist-packs")
+          ls -la dist-packs
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist-packs/*.tgz
+          generate_release_notes: true

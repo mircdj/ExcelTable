@@ -14,7 +14,7 @@ export function formatValue(value: unknown, col: ColumnState, locale: string): s
         : String(value);
     case 'date': {
       const d = value instanceof Date ? value : new Date(String(value));
-      return isNaN(d.getTime()) ? String(value) : d.toLocaleDateString(locale);
+      return isNaN(d.getTime()) ? String(value) : d.toLocaleDateString(locale, { timeZone: 'UTC' });
     }
     case 'boolean':
       return value ? '✓' : '';
@@ -43,7 +43,7 @@ export function parseValue(input: string, col: ColumnState, locale: string): unk
       const m = /^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})$/.exec(s);
       if (m) {
         const year = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
-        const d = new Date(year, Number(m[2]) - 1, Number(m[1]));
+        const d = new Date(Date.UTC(year, Number(m[2]) - 1, Number(m[1])));
         if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
       }
       const iso = new Date(s);

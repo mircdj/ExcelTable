@@ -4,8 +4,42 @@
   "description": "React / Next.js wrapper for @exceltable/core",
   "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "peerDependencies": { "react": ">=17" },
-  "dependencies": { "@exceltable/core": "0.1.0" },
-  "license": "MIT"
+  "files": ["dist"],
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@exceltable/core": "^0.1.0",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "keywords": [
+    "data-grid",
+    "datagrid",
+    "grid",
+    "table",
+    "excel",
+    "spreadsheet",
+    "react",
+    "nextjs",
+    "typescript"
+  ],
+  "author": "Mirco Sabatino",
+  "license": "MIT",
+  "homepage": "https://mircdj.github.io/ExcelTable/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mircdj/ExcelTable.git",
+    "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/mircdj/ExcelTable/issues"
+  }
 }
