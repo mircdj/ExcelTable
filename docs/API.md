@@ -21,7 +21,7 @@ const grid = new Grid(container: HTMLElement, options: GridOptions);
 | `rowHeight` | `number` | `32` | Altezza riga in px |
 | `headerHeight` | `number` | `36` | Altezza header |
 | `showRowNumbers` | `boolean` | `true` | Gutter con numeri riga stile Excel |
-| `editable` | `boolean` | `true` | Abilita l'editing globale |
+| `editable` | `boolean` | `true` | Editing globale. `false` rende la griglia interamente read-only: niente digitazione/F2/incolla/fill, e il menu contestuale non mostra Taglia/Incolla/Svuota/Inserisci/Elimina (resta Copia) né compare il fill handle |
 | `locale` | `string` | `'it-IT'` | Locale per parsing/formattazione numeri e date |
 | `undoLimit` | `number` | `200` | Profondità massima dello stack undo |
 | `theme` | `string` | `'excel'` | Suffisso classe tema: `excel` \| `dark` \| `blue` |

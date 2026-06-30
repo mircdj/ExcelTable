@@ -645,7 +645,7 @@ export class Renderer<T extends RowData> {
     });
 
     this.fillHandle.remove();
-    if (lastRange) {
+    if (lastRange && this.grid.options.editable) {
       const host = this.canvas.querySelector<HTMLElement>(
         `.eg-cell[data-row="${lastRange.endRow}"][data-col="${lastRange.endCol}"]`,
       );

@@ -507,6 +507,33 @@ test('contextmenu apre il menu con le azioni di riga', () => {
   g.destroy();
 });
 
+test('editable:false → griglia read-only a tenuta: niente mutazioni nel menu né fill handle', () => {
+  const ro = mk({ editable: false });
+  const cell = ro['renderer'].root.querySelector('.eg-cell[data-row="0"][data-col="1"]');
+  cell.dispatchEvent(new window.MouseEvent('contextmenu', { bubbles: true, clientX: 50, clientY: 50 }));
+  const labels = [...ro['renderer'].root.querySelectorAll('.eg-menu-item span')].map((s) => s.textContent);
+  assert.ok(labels.includes('Copia'), 'Copia resta disponibile in read-only');
+  assert.ok(
+    !labels.some((l) => /Inserisci|Elimina|Svuota|Taglia|Incolla/.test(l)),
+    'nessuna voce di mutazione nel menu in read-only',
+  );
+  ro['interaction'].menu.close();
+  ro.selectCell(0, 1);
+  assert.equal(ro['renderer'].root.querySelector('.eg-fill-handle'), null, 'nessun fill handle in read-only');
+  ro.destroy();
+
+  // sanity: una griglia editabile mostra sia le voci di mutazione sia il fill handle
+  const ed = mk();
+  ed.selectCell(0, 1);
+  assert.ok(ed['renderer'].root.querySelector('.eg-fill-handle'), 'fill handle presente se editabile');
+  const cell2 = ed['renderer'].root.querySelector('.eg-cell[data-row="0"][data-col="1"]');
+  cell2.dispatchEvent(new window.MouseEvent('contextmenu', { bubbles: true, clientX: 50, clientY: 50 }));
+  const labels2 = [...ed['renderer'].root.querySelectorAll('.eg-menu-item span')].map((s) => s.textContent);
+  assert.ok(labels2.some((l) => l.startsWith('Inserisci riga')), 'Inserisci presente se editabile');
+  ed['interaction'].menu.close();
+  ed.destroy();
+});
+
 
 /* ================================================================== */
 section('formule — motore (parser + valutatore)');

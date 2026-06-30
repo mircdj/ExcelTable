@@ -177,25 +177,29 @@ export class ContextMenu<T extends RowData> {
       const sel = g.ranges.length ? g.ranges : [];
       const selRows = new Set<number>();
       for (const r of sel) for (let i = r.startRow; i <= r.endRow; i++) selRows.add(i);
-      items.push(
-        { label: g.t('menuCopy'), key: 'Ctrl+C', action: () => this.actions.copy() },
-        { label: g.t('menuCut'), key: 'Ctrl+X', action: () => this.actions.cut() },
-        { label: g.t('menuPaste'), key: 'Ctrl+V', action: () => void this.actions.paste() },
-        { label: g.t('menuClear'), key: g.t('keyDelete'), action: () => this.clearCells() },
-        { sep: true },
-        {
-          label: g.t('menuInsertAbove'),
-          action: () => g.insertRows([{} as T], cellHit.row),
-          disabled: g.isGroupRow(cellHit.row),
-        },
-        { label: g.t('menuInsertBelow'), action: () => g.insertRows([{} as T], cellHit.row + 1) },
-        {
-          label: selRows.size > 1 ? g.t('menuDeleteRows', { n: selRows.size }) : g.t('menuDeleteRow'),
-          action: () => g.removeRows([...selRows]),
-          disabled: g.isGroupRow(cellHit.row),
-        },
-        { sep: true },
-      );
+      // Copy is always available; mutating items only when the grid is editable
+      // so `editable: false` is a clean read-only grid out of the box.
+      items.push({ label: g.t('menuCopy'), key: 'Ctrl+C', action: () => this.actions.copy() });
+      if (g.options.editable) {
+        items.push(
+          { label: g.t('menuCut'), key: 'Ctrl+X', action: () => this.actions.cut() },
+          { label: g.t('menuPaste'), key: 'Ctrl+V', action: () => void this.actions.paste() },
+          { label: g.t('menuClear'), key: g.t('keyDelete'), action: () => this.clearCells() },
+          { sep: true },
+          {
+            label: g.t('menuInsertAbove'),
+            action: () => g.insertRows([{} as T], cellHit.row),
+            disabled: g.isGroupRow(cellHit.row),
+          },
+          { label: g.t('menuInsertBelow'), action: () => g.insertRows([{} as T], cellHit.row + 1) },
+          {
+            label: selRows.size > 1 ? g.t('menuDeleteRows', { n: selRows.size }) : g.t('menuDeleteRow'),
+            action: () => g.removeRows([...selRows]),
+            disabled: g.isGroupRow(cellHit.row),
+          },
+        );
+      }
+      items.push({ sep: true });
       const col = g.columnByVisibleIndex(cellHit.col);
       if (col) {
         items.push(
