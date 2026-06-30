@@ -54,22 +54,26 @@ A pure-TypeScript core with **zero dependencies** and a virtualized DOM renderer
 
 ## Installation
 
+> **Note:** the packages are not published to npm yet. Use ExcelTable from source as shown below. The `@exceltable/*` import paths in the examples are the intended public API once the packages are published.
+
+Clone the repository and build the core:
+
 ```bash
-# core only (vanilla / any framework)
-npm install @exceltable/core
-
-# React / Next.js
-npm install @exceltable/react @exceltable/core
-
-# Angular
-npm install @exceltable/angular @exceltable/core
+git clone https://github.com/mircdj/ExcelTable.git
+cd ExcelTable
+npm install
+cd packages/core
+npx esbuild src/index.ts --bundle --format=esm --outfile=dist/index.js
 ```
 
-Import the stylesheet once in your app:
+Then reference the built bundle and stylesheet from your app:
 
 ```ts
-import '@exceltable/core/theme.css';
+import { Grid } from '@exceltable/core';   // resolves to packages/core/dist/index.js
+import '@exceltable/core/theme.css';        // packages/core/src/theme.css
 ```
+
+The fastest way to see it running is the [self-contained demo](demo/index.html) — open it directly in a browser, no build required.
 
 ## Quickstart
 
