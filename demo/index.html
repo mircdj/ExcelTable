@@ -6,26 +6,35 @@
 <title>ExcelTable — Demo completa</title>
 <style>
 :root {
-  --asphalt: #181a1f; --concrete: #f2f1ed; --line: #dcdad2;
-  --safety: #ffd200; --excel-blue: #0047bb; --ink: #1b1d22; --muted: #5d6068;
+  /* Palette aligned with the documentation site for visual consistency */
+  --asphalt: #0d1421;   /* dark navy — header & event console */
+  --concrete: #eef2f8;  /* light surface — page & kbd */
+  --line: #e6e9f0;
+  --safety: #00c2ff;    /* accent — cyan */
+  --excel-blue: #0047bb; --cyan: #00c2ff; --ink: #0d1421; --muted: #67738a;
   --mono: 'Consolas', 'SF Mono', monospace;
 }
 * { margin: 0; box-sizing: border-box; }
 body { font: 15px/1.5 'Segoe UI', system-ui, sans-serif; background: var(--concrete); color: var(--ink); }
-.hazard { height: 8px; background: repeating-linear-gradient(-45deg, var(--safety) 0 14px, var(--asphalt) 14px 28px); }
+.hazard { height: 3px; background: linear-gradient(90deg, var(--excel-blue), var(--cyan)); }
 
-header { background: var(--asphalt); color: #fff; padding: 18px 28px 16px; }
-.brand { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-.brand h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; text-transform: uppercase; }
-.brand h1 b { color: var(--safety); }
-.brand .tag { color: #9ca1ab; font-size: 13px; }
-nav { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
-nav a { color: #c7cbd3; font-size: 13px; text-decoration: none; border-bottom: 2px solid transparent; padding-bottom: 2px; }
-nav a:hover, nav a:focus-visible { color: var(--safety); border-color: var(--safety); outline: none; }
+header { position: sticky; top: 0; z-index: 100; background: rgba(13,20,33,.94); backdrop-filter: blur(10px);
+  color: #fff; padding: 14px 28px 16px; box-shadow: 0 1px 0 rgba(255,255,255,.06); }
+.brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.brand h1 { font-size: 22px; font-weight: 800; letter-spacing: .2px; display: flex; align-items: center; gap: 9px; }
+.brand h1 .bolt { color: var(--cyan); font-weight: 400; }
+.brand h1 b { color: var(--cyan); font-weight: 800; }
+.brand .tag { color: #aeb9cd; font-size: 13px; }
+.brand .back { margin-left: auto; color: #c4cee0; text-decoration: none; font-size: 13px; font-weight: 600;
+  border: 1px solid rgba(255,255,255,.25); padding: 7px 13px; border-radius: 8px; white-space: nowrap; }
+.brand .back:hover, .brand .back:focus-visible { background: rgba(0,194,255,.16); color: #fff; border-color: var(--cyan); outline: none; }
+nav { display: flex; gap: 4px; margin-top: 12px; flex-wrap: wrap; }
+nav a { color: #c4cee0; font-size: 13px; text-decoration: none; font-weight: 600; padding: 6px 10px; border-radius: 7px; }
+nav a:hover, nav a:focus-visible { color: #fff; background: rgba(255,255,255,.1); outline: none; }
 .kpis { display: flex; gap: 26px; margin-top: 14px; flex-wrap: wrap; }
-.kpi { font-family: var(--mono); font-size: 12px; color: #9ca1ab; }
+.kpi { font-family: var(--mono); font-size: 12px; color: #aeb9cd; }
 .kpi b { display: block; font-size: 19px; color: #fff; font-weight: 600; }
-.kpi b.warn { color: var(--safety); }
+.kpi b.warn { color: var(--cyan); }
 
 section.demo { padding: 26px 28px 8px; }
 section.demo > h2 { font-size: 17px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; }
@@ -100,8 +109,9 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--concrete); bo
 <div class="hazard"></div>
 <header>
   <div class="brand">
-    <h1>Excel<b>Grid</b></h1>
+    <h1><span class="bolt">⚡</span> Excel<b>Table</b></h1>
     <span class="tag">La tabella che si usa come Excel — demo completa di ogni funzionalità</span>
+    <a class="back" href="../">← Documentazione</a>
   </div>
   <nav aria-label="Sezioni demo">
     <a href="#s1">01 Registro + sottotabelle</a>
@@ -112,6 +122,7 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--concrete); bo
     <a href="#s6">06 Pivot</a>
     <a href="#s7">07 Server-side</a>
     <a href="#s8">08 Tree data</a>
+    <a href="#s9">09 Read-only</a>
     <a href="#a11y">Accessibilità</a>
   </nav>
   <div class="kpis">
@@ -252,6 +263,19 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--concrete); bo
   <div class="panel"><div id="grid-tree" style="height:380px"></div></div>
 </section>
 
+<!-- ============ 09 · Read-only ============ -->
+<section class="demo" id="s9">
+  <h2><span>09</span>Read-only — tabella a sola lettura a tenuta</h2>
+  <p class="lead">Una sola opzione: <code>editable: false</code>. La griglia diventa <b>interamente di sola lettura</b> — niente digitazione, F2, doppio-click, incolla o fill handle, e il <b>menu col tasto destro non mostra Taglia/Incolla/Svuota/Inserisci/Elimina</b> (resta solo Copia). Nessun workaround. Prova a fare doppio-click, <kbd>Ctrl</kbd>+<kbd>V</kbd> o ad aprire il menu contestuale: nessuna mutazione è possibile. Usa il pulsante per confrontare con la modalità editabile.</p>
+  <div class="panel">
+    <div class="toolbar">
+      <button class="tb primary" id="ro-toggle">🔒 Sola lettura: ON</button>
+      <span class="status" id="ro-status">Prova: doppio-click su una cella, <kbd>Ctrl</kbd>+<kbd>V</kbd>, tasto destro → nessun editing.</span>
+    </div>
+    <div id="grid-readonly" style="height:340px"></div>
+  </div>
+</section>
+
 <!-- ============ Accessibilità + scorciatoie ============ -->
 <div class="shortcuts" id="a11y">
   <h2>Accessibilità (WCAG 2.1 AA)</h2>
@@ -278,7 +302,8 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--concrete); bo
   </div>
 </div>
 
-<script>"use strict";
+<script>
+"use strict";
 var ExcelTable = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -902,7 +927,7 @@ var ExcelTable = (() => {
         cell.classList.toggle("eg-copy-r", !!cp && c === cp.endCol && r >= cp.startRow && r <= cp.endRow);
       });
       this.fillHandle.remove();
-      if (lastRange) {
+      if (lastRange && this.grid.options.editable) {
         const host = this.canvas.querySelector(
           `.eg-cell[data-row="${lastRange.endRow}"][data-col="${lastRange.endCol}"]`
         );
@@ -1010,7 +1035,7 @@ var ExcelTable = (() => {
         return typeof value === "number" && Number.isFinite(value) ? value.toLocaleString(locale, { maximumFractionDigits: 6 }) : String(value);
       case "date": {
         const d = value instanceof Date ? value : new Date(String(value));
-        return isNaN(d.getTime()) ? String(value) : d.toLocaleDateString(locale);
+        return isNaN(d.getTime()) ? String(value) : d.toLocaleDateString(locale, { timeZone: "UTC" });
       }
       case "boolean":
         return value ? "\u2713" : "";
@@ -1033,7 +1058,7 @@ var ExcelTable = (() => {
         const m = /^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})$/.exec(s);
         if (m) {
           const year = m[3].length === 2 ? 2e3 + Number(m[3]) : Number(m[3]);
-          const d = new Date(year, Number(m[2]) - 1, Number(m[1]));
+          const d = new Date(Date.UTC(year, Number(m[2]) - 1, Number(m[1])));
           if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
         }
         const iso = new Date(s);
@@ -1237,25 +1262,27 @@ var ExcelTable = (() => {
         const sel = g.ranges.length ? g.ranges : [];
         const selRows = /* @__PURE__ */ new Set();
         for (const r of sel) for (let i = r.startRow; i <= r.endRow; i++) selRows.add(i);
-        items.push(
-          { label: g.t("menuCopy"), key: "Ctrl+C", action: () => this.actions.copy() },
-          { label: g.t("menuCut"), key: "Ctrl+X", action: () => this.actions.cut() },
-          { label: g.t("menuPaste"), key: "Ctrl+V", action: () => void this.actions.paste() },
-          { label: g.t("menuClear"), key: g.t("keyDelete"), action: () => this.clearCells() },
-          { sep: true },
-          {
-            label: g.t("menuInsertAbove"),
-            action: () => g.insertRows([{}], cellHit.row),
-            disabled: g.isGroupRow(cellHit.row)
-          },
-          { label: g.t("menuInsertBelow"), action: () => g.insertRows([{}], cellHit.row + 1) },
-          {
-            label: selRows.size > 1 ? g.t("menuDeleteRows", { n: selRows.size }) : g.t("menuDeleteRow"),
-            action: () => g.removeRows([...selRows]),
-            disabled: g.isGroupRow(cellHit.row)
-          },
-          { sep: true }
-        );
+        items.push({ label: g.t("menuCopy"), key: "Ctrl+C", action: () => this.actions.copy() });
+        if (g.options.editable) {
+          items.push(
+            { label: g.t("menuCut"), key: "Ctrl+X", action: () => this.actions.cut() },
+            { label: g.t("menuPaste"), key: "Ctrl+V", action: () => void this.actions.paste() },
+            { label: g.t("menuClear"), key: g.t("keyDelete"), action: () => this.clearCells() },
+            { sep: true },
+            {
+              label: g.t("menuInsertAbove"),
+              action: () => g.insertRows([{}], cellHit.row),
+              disabled: g.isGroupRow(cellHit.row)
+            },
+            { label: g.t("menuInsertBelow"), action: () => g.insertRows([{}], cellHit.row + 1) },
+            {
+              label: selRows.size > 1 ? g.t("menuDeleteRows", { n: selRows.size }) : g.t("menuDeleteRow"),
+              action: () => g.removeRows([...selRows]),
+              disabled: g.isGroupRow(cellHit.row)
+            }
+          );
+        }
+        items.push({ sep: true });
         const col = g.columnByVisibleIndex(cellHit.col);
         if (col) {
           items.push(
@@ -5405,6 +5432,42 @@ const gridTree = new Grid($('grid-tree'), {
   treeData: { childrenField: 'children', indent: 22 },
 });
 gridTree.events.on('cellsChanged', (e) => logEvent('tree:modifica', { righe: e.changes.map((c) => c.rowId) }));
+
+/* 09 · Read-only — editable:false è una tabella a sola lettura a tenuta */
+const roCols = [
+  { field: 'pod', header: 'POD', width: 150, editable: false },
+  { field: 'comune', header: 'Comune', width: 150 },
+  { field: 'potenza', header: 'kW', type: 'number', width: 90 },
+  { field: 'data', header: 'Sopralluogo', type: 'date', width: 140 },
+  { field: 'esito', header: 'Esito', type: 'select', options: ['OK', 'Da rivedere', 'KO'], width: 140 },
+];
+const roData = [
+  { pod: 'IT001E00012345', comune: 'Bergamo', potenza: 6, data: '2026-02-01', esito: 'OK' },
+  { pod: 'IT001E00067890', comune: 'Brescia', potenza: 15, data: '2026-02-03', esito: 'Da rivedere' },
+  { pod: 'IT001E00054321', comune: 'Como', potenza: 3, data: '2026-01-28', esito: 'OK' },
+  { pod: 'IT001E00099887', comune: 'Lecco', potenza: 22, data: '2026-02-05', esito: 'KO' },
+  { pod: 'IT001E00033445', comune: 'Monza', potenza: 9, data: '2026-02-06', esito: 'OK' },
+];
+let roGrid = null, roEditable = false;
+function buildReadonly() {
+  if (roGrid) roGrid.destroy();
+  roGrid = new Grid($('grid-readonly'), {
+    ariaLabel: 'Tabella sopralluoghi (sola lettura)',
+    columns: roCols, data: roData, getRowId: (r) => r.pod,
+    editable: roEditable, locale: 'it-IT',
+  });
+}
+buildReadonly();
+$('ro-toggle').onclick = () => {
+  roEditable = !roEditable;
+  buildReadonly();
+  const btn = $('ro-toggle');
+  btn.textContent = roEditable ? '✏️ Editabile: ON' : '🔒 Sola lettura: ON';
+  btn.classList.toggle('primary', !roEditable);
+  $('ro-status').innerHTML = roEditable
+    ? 'Ora è editabile: doppio-click, incolla, fill handle e voci di mutazione nel menu sono attivi.'
+    : 'Prova: doppio-click su una cella, <kbd>Ctrl</kbd>+<kbd>V</kbd>, tasto destro → nessun editing.';
+};
 
 /* FPS meter */
 let frames = 0, last = performance.now();
