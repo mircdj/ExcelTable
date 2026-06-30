@@ -111,7 +111,9 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--concrete); bo
   <div class="brand">
     <h1><span class="bolt">⚡</span> Excel<b>Table</b></h1>
     <span class="tag">La tabella che si usa come Excel — demo completa di ogni funzionalità</span>
-    <a class="back" href="../">← Documentazione</a>
+    <a class="back" href="https://github.com/mircdj/ExcelTable" target="_blank" rel="noopener" aria-label="GitHub repository" style="margin-left:auto">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" style="vertical-align:-2px;margin-right:5px"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+    <a class="back" href="../" style="margin-left:8px">← Documentazione</a>
   </div>
   <nav aria-label="Sezioni demo">
     <a href="#s1">01 Registro + sottotabelle</a>
@@ -123,6 +125,11 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--concrete); bo
     <a href="#s7">07 Server-side</a>
     <a href="#s8">08 Tree data</a>
     <a href="#s9">09 Read-only</a>
+    <a href="#s10">10 i18n</a>
+    <a href="#s11">11 Trova & Sostituisci</a>
+    <a href="#s12">12 Altezza righe variabile</a>
+    <a href="#s13">13 Drag&drop colonne</a>
+    <a href="#s14">14 Temi</a>
     <a href="#a11y">Accessibilità</a>
   </nav>
   <div class="kpis">
@@ -273,6 +280,80 @@ kbd { font-family: var(--mono); font-size: 11px; background: var(--concrete); bo
       <span class="status" id="ro-status">Prova: doppio-click su una cella, <kbd>Ctrl</kbd>+<kbd>V</kbd>, tasto destro → nessun editing.</span>
     </div>
     <div id="grid-readonly" style="height:340px"></div>
+  </div>
+</section>
+
+<!-- ============ 10 · i18n ============ -->
+<section class="demo" id="s10">
+  <h2><span>10</span>i18n — tutte le stringhe UI in una tabella tipizzata</h2>
+  <p class="lead">Ogni etichetta dell'interfaccia (menu, filtri, trova/sostituisci, totali) vive in una tabella di stringhe tipizzata. <b>Italiano di default</b>, <code>EN</code> incluso pronto, override parziali con <code>strings: {'{'} … {'}'}</code>. Cambia lingua e riapri il menu col tasto destro o il filtro di colonna: le voci seguono la lingua.</p>
+  <div class="panel">
+    <div class="toolbar">
+      <button class="tb primary" id="i18n-it">🇮🇹 Italiano</button>
+      <button class="tb" id="i18n-en">🇬🇧 English</button>
+      <span class="status" id="i18n-status">Lingua attiva: italiano — apri il menu contestuale per vedere le voci.</span>
+    </div>
+    <div id="grid-i18n" style="height:300px"></div>
+  </div>
+</section>
+
+<!-- ============ 11 · Trova & Sostituisci ============ -->
+<section class="demo" id="s11">
+  <h2><span>11</span>Trova &amp; Sostituisci — <kbd>Ctrl</kbd>+<kbd>F</kbd> / <kbd>Ctrl</kbd>+<kbd>H</kbd></h2>
+  <p class="lead">Pannello nativo con conteggio risultati, navigazione e sostituzione uno/tutti — <b>undoabile</b>. Stessa logica via API: <code>findAll(query)</code> ritorna le celle, <code>replaceIn(cells, query, replacement)</code> sostituisce e ritorna il numero di occorrenze. Prova i pulsanti o digita <kbd>Ctrl</kbd>+<kbd>F</kbd> nella griglia.</p>
+  <div class="panel">
+    <div class="toolbar">
+      <button class="tb" id="find-open">🔍 Trova (Ctrl+F)</button>
+      <button class="tb" id="replace-open">↔ Sostituisci (Ctrl+H)</button>
+      <span class="sep"></span>
+      <input class="tb" id="find-q" placeholder="Trova…" style="width:130px">
+      <input class="tb" id="find-r" placeholder="Sostituisci con…" style="width:150px">
+      <button class="tb primary" id="find-apply">Sostituisci tutto (API)</button>
+      <span class="status" id="find-status">findAll + replaceIn: sostituzione via API, undoabile.</span>
+    </div>
+    <div id="grid-find" style="height:300px"></div>
+  </div>
+</section>
+
+<!-- ============ 12 · Altezza righe variabile ============ -->
+<section class="demo" id="s12">
+  <h2><span>12</span>Altezza righe variabile — <code>getRowHeight</code></h2>
+  <p class="lead">L'altezza di ogni riga è calcolata da <code>getRowHeight(row, i)</code>; il virtualizzatore usa <b>offset a somme prefisse</b>, quindi scroll e posizionamento restano esatti anche con altezze miste. Qui le righe con una nota lunga sono più alte (con <code>wrapText</code> per il testo a capo).</p>
+  <div class="panel"><div id="grid-rowheight" style="height:360px"></div></div>
+</section>
+
+<!-- ============ 13 · Drag&drop colonne ============ -->
+<section class="demo" id="s13">
+  <h2><span>13</span>Drag&amp;drop colonne — riordino degli header</h2>
+  <p class="lead">Trascina un'intestazione per <b>riordinare le colonne</b> (ghost + indicatore di rilascio); il semplice click resta ordinamento. Stessa operazione via API con <code>moveColumn(colId, toIndex)</code>. Prova a trascinare un header, oppure usa i pulsanti.</p>
+  <div class="panel">
+    <div class="toolbar">
+      <button class="tb" id="mc-first">⟵ "Comune" all'inizio</button>
+      <button class="tb" id="mc-last">"Comune" alla fine ⟶</button>
+      <span class="status">…oppure trascina direttamente le intestazioni.</span>
+    </div>
+    <div id="grid-dnd" style="height:300px"></div>
+  </div>
+</section>
+
+<!-- ============ 14 · Temi ============ -->
+<section class="demo" id="s14">
+  <style>
+    /* Tema custom brandizzato: solo poche variabili --eg-* sovrascritte */
+    .eg-theme-brand { --eg-accent: #7c3aed; --eg-selection-bg: rgba(124,58,237,.12);
+      --eg-header-bg: #f5f1ff; --eg-header-fg: #4c1d95; }
+  </style>
+  <h2><span>14</span>Temi — variabili CSS, ristilabile al 100%</h2>
+  <p class="lead">Tre temi inclusi (<code>excel</code> verde, <code>dark</code>, <code>blue</code>) più una superficie completa di <b>custom property CSS</b>: bastano poche variabili <code>--eg-*</code> per brandizzare la griglia (qui il tema <b>brand</b> viola), o definire una classe tema nuova. Cambio a runtime sostituendo la classe sul root.</p>
+  <div class="panel">
+    <div class="toolbar">
+      <button class="tb primary" data-theme="excel">Excel (verde)</button>
+      <button class="tb" data-theme="dark">Dark</button>
+      <button class="tb" data-theme="blue">Blue</button>
+      <button class="tb" data-theme="brand">Brand (custom)</button>
+      <span class="status" id="theme-status">Tema attivo: excel</span>
+    </div>
+    <div id="grid-theme" style="height:300px"></div>
   </div>
 </section>
 
@@ -5468,6 +5549,96 @@ $('ro-toggle').onclick = () => {
     ? 'Ora è editabile: doppio-click, incolla, fill handle e voci di mutazione nel menu sono attivi.'
     : 'Prova: doppio-click su una cella, <kbd>Ctrl</kbd>+<kbd>V</kbd>, tasto destro → nessun editing.';
 };
+
+/* ---- Dati condivisi per le demo 10–14 ---- */
+const sampleCols = () => [
+  { field: 'pod', header: 'POD', width: 160, editable: false },
+  { field: 'comune', header: 'Comune', width: 150 },
+  { field: 'potenza', header: 'kW', type: 'number', width: 90 },
+  { field: 'esito', header: 'Esito', type: 'select', options: ['OK', 'Da rivedere', 'KO'], width: 150 },
+];
+const sampleData = () => [
+  { pod: 'IT001E00012345', comune: 'Bergamo', potenza: 6, esito: 'OK' },
+  { pod: 'IT001E00067890', comune: 'Brescia', potenza: 15, esito: 'Da rivedere' },
+  { pod: 'IT001E00054321', comune: 'Como', potenza: 3, esito: 'OK' },
+  { pod: 'IT001E00099887', comune: 'Lecco', potenza: 22, esito: 'KO' },
+  { pod: 'IT001E00033445', comune: 'Monza', potenza: 9, esito: 'OK' },
+];
+
+/* 10 · i18n — IT/EN swap (le stringhe UI vivono in una tabella tipizzata) */
+const { EN } = ExcelTable;
+let i18nGrid = null;
+function buildI18n(strings) {
+  if (i18nGrid) i18nGrid.destroy();
+  i18nGrid = new Grid($('grid-i18n'), {
+    columns: sampleCols(), data: sampleData(), getRowId: (r) => r.pod, strings, locale: 'it-IT',
+  });
+}
+buildI18n(undefined);
+$('i18n-it').onclick = () => {
+  buildI18n(undefined);
+  $('i18n-it').classList.add('primary'); $('i18n-en').classList.remove('primary');
+  $('i18n-status').textContent = 'Lingua attiva: italiano — apri il menu contestuale per vedere le voci.';
+};
+$('i18n-en').onclick = () => {
+  buildI18n(EN);
+  $('i18n-en').classList.add('primary'); $('i18n-it').classList.remove('primary');
+  $('i18n-status').textContent = 'Active language: English — open the right-click menu to see the labels.';
+};
+
+/* 11 · Trova & Sostituisci — pannello nativo (Ctrl+F/H) + API findAll/replaceIn */
+const findGrid = new Grid($('grid-find'), {
+  columns: sampleCols(), data: sampleData(), getRowId: (r) => r.pod, locale: 'it-IT',
+});
+const findRoot = () => $('grid-find').querySelector('.eg-root');
+const sendCtrl = (k) => findRoot()?.dispatchEvent(new KeyboardEvent('keydown', { key: k, ctrlKey: true, bubbles: true }));
+$('find-open').onclick = () => sendCtrl('f');
+$('replace-open').onclick = () => sendCtrl('h');
+$('find-apply').onclick = () => {
+  const q = $('find-q').value.trim(), r = $('find-r').value;
+  if (!q) { $('find-status').textContent = 'Inserisci un testo da cercare.'; return; }
+  const cells = findGrid.findAll(q);
+  const n = findGrid.replaceIn(cells, q, r);
+  $('find-status').textContent = `${n} occorrenze di "${q}" sostituite con "${r}" — annullabile con Ctrl+Z.`;
+};
+
+/* 12 · Altezza righe variabile — getRowHeight + wrapText */
+const rhGrid = new Grid($('grid-rowheight'), {
+  columns: [
+    { field: 'attivita', header: 'Attività', width: 210, editable: false },
+    { field: 'nota', header: 'Nota (testo a capo)', width: 470, wrapText: true },
+  ],
+  data: [
+    { id: 'r1', attivita: 'Sopralluogo iniziale', nota: 'Accesso dal cancello laterale; contattare il custode almeno 30 minuti prima dell’arrivo.' },
+    { id: 'r2', attivita: 'Posa contatore', nota: 'OK' },
+    { id: 'r3', attivita: 'Collaudo', nota: 'Verificare i sigilli, fotografare il display e allegare il report firmato dal responsabile di cantiere e dal cliente.' },
+    { id: 'r4', attivita: 'Chiusura cantiere', nota: '' },
+    { id: 'r5', attivita: 'Pratica amministrativa', nota: 'Inviare la modulistica entro 5 giorni lavorativi; in caso di anomalia aprire un ticket al back office.' },
+  ],
+  getRowId: (r) => r.id,
+  getRowHeight: (row) => (row.nota && row.nota.length > 40 ? 72 : 34),
+});
+
+/* 13 · Drag&drop colonne — riordino header + moveColumn(colId, toIndex) */
+const dndGrid = new Grid($('grid-dnd'), {
+  columns: sampleCols(), data: sampleData(), getRowId: (r) => r.pod, locale: 'it-IT',
+});
+$('mc-first').onclick = () => dndGrid.moveColumn('comune', 0);
+$('mc-last').onclick = () => dndGrid.moveColumn('comune', dndGrid.visibleColumns().length - 1);
+
+/* 14 · Temi — swap della classe sul root (excel/dark/blue + brand custom via --eg-*) */
+const themeGrid = new Grid($('grid-theme'), {
+  columns: sampleCols(), data: sampleData(), getRowId: (r) => r.pod, locale: 'it-IT', theme: 'excel',
+});
+document.querySelectorAll('#s14 [data-theme]').forEach((btn) => {
+  btn.onclick = () => {
+    const t = btn.dataset.theme;
+    const root = $('grid-theme').querySelector('.eg-root');
+    root.className = root.className.replace(/eg-theme-\S+/, 'eg-theme-' + t);
+    document.querySelectorAll('#s14 [data-theme]').forEach((b) => b.classList.toggle('primary', b === btn));
+    $('theme-status').textContent = 'Tema attivo: ' + t;
+  };
+});
 
 /* FPS meter */
 let frames = 0, last = performance.now();
