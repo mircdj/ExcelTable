@@ -1,0 +1,15 @@
+{
+  "name": "@exceltable/core",
+  "version": "0.1.0",
+  "description": "Excel-style data grid core — framework agnostic, zero dependencies",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "src/theme.css"],
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./theme.css": "./src/theme.css"
+  },
+  "sideEffects": ["*.css"],
+  "license": "MIT"
+}

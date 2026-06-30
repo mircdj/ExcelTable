@@ -1,0 +1,11 @@
+{
+  "name": "@exceltable/react",
+  "version": "0.1.0",
+  "description": "React / Next.js wrapper for @exceltable/core",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "peerDependencies": { "react": ">=17" },
+  "dependencies": { "@exceltable/core": "0.1.0" },
+  "license": "MIT"
+}

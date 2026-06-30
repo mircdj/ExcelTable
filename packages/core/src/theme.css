@@ -1,0 +1,392 @@
+/* ==========================================================================
+   @exceltable/core — themes.
+   Every visual token is a CSS custom property: override any of them on
+   .eg-root (or a wrapper) to restyle the grid without touching internals.
+   ========================================================================== */
+
+.eg-root {
+  /* ---- Design tokens (override these) ---- */
+  --eg-font: 13px/1.35 'Segoe UI', system-ui, sans-serif;
+  --eg-bg: #ffffff;
+  --eg-fg: #1f2328;
+  --eg-border: #d4d4d8;
+  --eg-grid-line: #e4e4e7;
+  --eg-header-bg: #f4f5f7;
+  --eg-header-fg: #3f3f46;
+  --eg-row-hover: #f8fafc;
+  --eg-row-dirty: #fffbe6;
+  --eg-readonly-fg: #5f6670;  /* 5.4:1 su bianco — WCAG AA */
+  --eg-accent: #107c41;            /* Excel green */
+  --eg-selection-bg: rgba(16, 124, 65, 0.10);
+  --eg-active-border: var(--eg-accent);
+  --eg-cell-padding: 0 8px;
+  --eg-radius: 6px;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font: var(--eg-font);
+  color: var(--eg-fg);
+  background: var(--eg-bg);
+  border: 1px solid var(--eg-border);
+  border-radius: var(--eg-radius);
+  overflow: hidden;
+  outline: none;
+  user-select: none;
+  box-sizing: border-box;
+}
+.eg-root *, .eg-root *::before, .eg-root *::after { box-sizing: border-box; }
+.eg-root:focus-visible { box-shadow: 0 0 0 2px var(--eg-accent); }
+
+.eg-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* ---- Header (sticky top) ---- */
+.eg-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  background: var(--eg-header-bg);
+  border-bottom: 1px solid var(--eg-border);
+  display: flex;
+  align-items: stretch;
+}
+.eg-hcell {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--eg-cell-padding);
+  font-weight: 600;
+  color: var(--eg-header-fg);
+  background: var(--eg-header-bg);
+  border-right: 1px solid var(--eg-grid-line);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.eg-hcell.eg-pinned { z-index: 7; box-shadow: 2px 0 3px -1px rgba(0,0,0,.08); }
+.eg-htext { overflow: hidden; text-overflow: ellipsis; flex: 1; }
+.eg-sort { font-size: 9px; color: var(--eg-accent); width: 10px; }
+.eg-filter-btn {
+  border: 0; background: transparent; cursor: pointer; font-size: 10px;
+  color: var(--eg-header-fg); opacity: .45; padding: 2px; border-radius: 3px;
+}
+.eg-hcell:hover .eg-filter-btn { opacity: 1; }
+.eg-filter-btn.eg-filter-on { opacity: 1; color: var(--eg-accent); font-weight: 700; }
+.eg-resize {
+  position: absolute; right: -3px; top: 0; width: 7px; height: 100%;
+  cursor: col-resize; z-index: 2;
+}
+.eg-resize:hover { background: var(--eg-accent); opacity: .4; }
+
+/* ---- Rows & cells ---- */
+.eg-canvas { position: relative; }
+.eg-row {
+  position: absolute; left: 0;
+  /* Le celle sticky (gutter, pinned, etichette gruppo) restano nel flusso:
+     il flex le affianca sulla stessa riga; le celle centrali sono absolute
+     e non partecipano al layout flex. */
+  display: flex;
+  align-items: stretch;
+}
+.eg-row:hover .eg-cell:not(.eg-sel):not(.eg-gutter) { background: var(--eg-row-hover); }
+.eg-row--dirty .eg-gutter::after {
+  content: ''; position: absolute; left: 2px; top: 50%; transform: translateY(-50%);
+  width: 5px; height: 5px; border-radius: 50%; background: #2563eb;
+}
+
+.eg-cell {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: var(--eg-cell-padding);
+  background: var(--eg-bg);
+  border-right: 1px solid var(--eg-grid-line);
+  border-bottom: 1px solid var(--eg-grid-line);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: cell;
+}
+.eg-cell.eg-pinned { z-index: 3; box-shadow: 2px 0 3px -1px rgba(0,0,0,.06); }
+.eg-type-number { justify-content: flex-end; font-variant-numeric: tabular-nums; }
+.eg-type-boolean { justify-content: center; color: var(--eg-accent); font-weight: 700; }
+.eg-readonly { color: var(--eg-readonly-fg); }
+
+.eg-cell.eg-pinned, .eg-hcell.eg-pinned, .eg-group-label { flex: 0 0 auto; }
+
+.eg-gutter {
+  flex: 0 0 auto;
+  position: sticky !important;
+  left: 0;
+  z-index: 4;
+  justify-content: center;
+  background: var(--eg-header-bg);
+  color: var(--eg-header-fg);
+  font-size: 11px;
+  cursor: pointer;
+}
+.eg-gutter.eg-hl { background: color-mix(in srgb, var(--eg-accent) 18%, var(--eg-header-bg)); font-weight: 700; }
+.eg-corner { z-index: 8 !important; }
+
+/* ---- Selection (class-painted, works with pinned columns) ---- */
+.eg-cell.eg-sel { background: var(--eg-selection-bg); }
+.eg-cell.eg-active {
+  background: var(--eg-bg);
+  outline: 2px solid var(--eg-active-border);
+  outline-offset: -2px;
+  z-index: 2;
+}
+.eg-cell.eg-pinned.eg-active { z-index: 4; }
+
+/* Marching ants on the copied range */
+@keyframes eg-march { to { background-position: 8px 0, -8px 100%, 0 -8px, 100% 8px; } }
+.eg-copy-t, .eg-copy-b, .eg-copy-l, .eg-copy-r { position: absolute; }
+.eg-cell.eg-copy-t { box-shadow: inset 0 2px 0 -1px var(--eg-accent); }
+.eg-cell.eg-copy-b { box-shadow: inset 0 -2px 0 -1px var(--eg-accent); }
+.eg-cell.eg-copy-l { box-shadow: inset 2px 0 0 -1px var(--eg-accent); }
+.eg-cell.eg-copy-r { box-shadow: inset -2px 0 0 -1px var(--eg-accent); }
+.eg-cell.eg-copy-t.eg-copy-l { box-shadow: inset 2px 2px 0 -1px var(--eg-accent); }
+.eg-cell.eg-copy-b.eg-copy-r { box-shadow: inset -2px -2px 0 -1px var(--eg-accent); }
+
+/* ---- Fill handle ---- */
+.eg-fill-handle {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--eg-accent);
+  border: 1px solid var(--eg-bg);
+  cursor: crosshair;
+  z-index: 5;
+}
+
+/* ---- Inline editor ---- */
+.eg-editor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--eg-accent);
+  outline: none;
+  padding: var(--eg-cell-padding);
+  font: var(--eg-font);
+  background: var(--eg-bg);
+  color: var(--eg-fg);
+  resize: none;
+  z-index: 9;
+}
+
+/* ---- Filter popup ---- */
+.eg-filter-pop {
+  position: absolute;
+  z-index: 20;
+  width: 230px;
+  background: var(--eg-bg);
+  border: 1px solid var(--eg-border);
+  border-radius: var(--eg-radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,.16);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.eg-filter-search {
+  border: 1px solid var(--eg-border); border-radius: 4px; padding: 5px 8px;
+  font: var(--eg-font); outline-color: var(--eg-accent);
+}
+.eg-filter-list { max-height: 220px; overflow: auto; display: flex; flex-direction: column; }
+.eg-filter-item { display: flex; gap: 6px; align-items: center; padding: 3px 4px; cursor: pointer; border-radius: 3px; }
+.eg-filter-item:hover { background: var(--eg-row-hover); }
+.eg-filter-actions { display: flex; justify-content: space-between; gap: 6px; }
+.eg-btn {
+  border: 1px solid var(--eg-border); background: var(--eg-bg); color: var(--eg-fg);
+  border-radius: 4px; padding: 5px 10px; cursor: pointer; font: var(--eg-font);
+}
+.eg-btn-primary { background: var(--eg-accent); border-color: var(--eg-accent); color: #fff; }
+
+/* ==========================================================================
+   Built-in themes
+   ========================================================================== */
+
+.eg-theme-dark {
+  --eg-bg: #16181d;
+  --eg-fg: #e6e8ec;
+  --eg-border: #2c2f37;
+  --eg-grid-line: #23262d;
+  --eg-header-bg: #1d2026;
+  --eg-header-fg: #b6bac3;
+  --eg-row-hover: #1b1e24;
+  --eg-row-dirty: #2a2615;
+  --eg-readonly-fg: #6b7078;
+  --eg-accent: #34d399;
+  --eg-selection-bg: rgba(52, 211, 153, 0.13);
+}
+
+.eg-theme-blue {
+  --eg-accent: #0047bb;             /* Excel blue */
+  --eg-selection-bg: rgba(0, 71, 187, 0.09);
+  --eg-header-bg: #eef3fc;
+  --eg-header-fg: #0b3d91;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eg-root * { animation: none !important; transition: none !important; }
+}
+
+
+/* ---- Master/detail (sottotabelle annidate) ---- */
+.eg-expand {
+  border: 0; background: transparent; cursor: pointer;
+  font-size: 11px; color: var(--eg-accent); padding: 0 4px 0 0;
+  line-height: 1;
+}
+.eg-expand:focus-visible { outline: 2px solid var(--eg-accent); border-radius: 2px; }
+.eg-detail {
+  position: absolute; left: 0; z-index: 1;
+  background: color-mix(in srgb, var(--eg-accent) 4%, var(--eg-bg));
+  border-bottom: 1px solid var(--eg-grid-line);
+  padding: 6px 10px 8px 56px; /* allineato al bordo del gutter */
+  box-shadow: inset 0 7px 6px -7px rgba(0,0,0,.14); /* lieve rientro, niente scatola */
+}
+.eg-detail-inner {
+  position: sticky; left: 8px;
+  height: 100%;
+  border-left: 3px solid var(--eg-accent); /* filo che collega alla riga padre */
+  padding-left: 8px;
+  box-sizing: content-box;
+}
+.eg-detail-inner .eg-root { box-shadow: none; border-radius: 4px; }
+.eg-detail-inner--custom { width: auto; max-width: calc(100% - 16px); }
+.eg-detail-custom { height: 100%; overflow: auto; }
+/* Contenuto che entra nel pannello: overflow spento, zero scrollbar accidentali */
+.eg-root.eg-fit > .eg-viewport { overflow: hidden; }
+
+/* ---- Celle multi-contenuto e wrap ---- */
+.eg-cell.eg-multi {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 2px;
+  white-space: normal;
+}
+.eg-line { line-height: 1.25; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; }
+.eg-cell.eg-wrap { white-space: normal; line-height: 1.3; align-items: flex-start; padding-top: 5px; }
+
+/* ---- Focus visibile AA su elementi interattivi ---- */
+.eg-filter-btn:focus-visible, .eg-btn:focus-visible, .eg-filter-search:focus-visible {
+  outline: 2px solid var(--eg-accent); outline-offset: 1px;
+}
+
+/* ---- Responsive: il viewport scrolla sempre su entrambi gli assi ---- */
+@media (max-width: 640px) {
+  .eg-root { --eg-cell-padding: 0 6px; }
+  .eg-fill-handle { width: 12px; height: 12px; right: -6px; bottom: -6px; } /* touch target */
+}
+
+
+/* ---- Raggruppamento ---- */
+.eg-row.eg-group-row { z-index: 1; }
+.eg-row.eg-group-row .eg-gutter { background: color-mix(in srgb, var(--eg-accent) 10%, var(--eg-header-bg)); }
+.eg-group-label {
+  position: absolute; top: 0; height: 100%; display: flex; align-items: center;
+  padding: var(--eg-cell-padding); min-width: 280px; cursor: pointer;
+  background: color-mix(in srgb, var(--eg-accent) 7%, var(--eg-bg));
+  border-bottom: 1px solid var(--eg-grid-line); white-space: nowrap;
+  position: sticky !important; left: 56px; z-index: 2; font-size: 12.5px;
+}
+.eg-group-count { color: var(--eg-readonly-fg); margin-left: 2px; }
+.eg-cell.eg-agg {
+  background: color-mix(in srgb, var(--eg-accent) 7%, var(--eg-bg));
+  font-weight: 600; font-size: 12px;
+}
+
+/* ---- Riga totali (sticky bottom) ---- */
+.eg-totals-row {
+  position: sticky; bottom: 0; z-index: 6; height: 34px;
+  display: flex;
+  align-items: stretch;
+  background: var(--eg-header-bg);
+  border-top: 2px solid var(--eg-accent);
+  font-weight: 700;
+}
+.eg-totals-row .eg-cell { background: var(--eg-header-bg); height: 100%; border-bottom: 0; }
+.eg-totals-label { justify-content: center; font-size: 14px; color: var(--eg-accent); }
+.eg-agg-fn { font-weight: 400; font-size: 10px; color: var(--eg-readonly-fg); margin-right: 4px; text-transform: uppercase; }
+
+/* ---- Trova & sostituisci ---- */
+.eg-find {
+  position: absolute; top: 6px; right: 18px; z-index: 30;
+  background: var(--eg-bg); border: 1px solid var(--eg-border); border-radius: var(--eg-radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,.18); padding: 8px; display: flex; flex-direction: column; gap: 6px;
+}
+.eg-find-row { display: flex; align-items: center; gap: 6px; }
+.eg-find-replace-row { display: none; }
+.eg-find--replace .eg-find-replace-row { display: flex; }
+.eg-find input[type="text"], .eg-find-q, .eg-find-r {
+  border: 1px solid var(--eg-border); border-radius: 4px; padding: 5px 8px;
+  font: var(--eg-font); width: 170px; outline-color: var(--eg-accent);
+  background: var(--eg-bg); color: var(--eg-fg);
+}
+.eg-find-count { font-size: 11px; color: var(--eg-readonly-fg); min-width: 48px; text-align: center; font-variant-numeric: tabular-nums; }
+.eg-find-case { font-size: 11px; display: flex; align-items: center; gap: 3px; cursor: pointer; color: var(--eg-fg); }
+
+/* ---- Context menu ---- */
+.eg-menu {
+  position: absolute; z-index: 40; min-width: 230px;
+  background: var(--eg-bg); border: 1px solid var(--eg-border); border-radius: var(--eg-radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,.2); padding: 5px; display: flex; flex-direction: column;
+}
+.eg-menu-item {
+  display: flex; justify-content: space-between; align-items: center; gap: 18px;
+  border: 0; background: transparent; color: var(--eg-fg); font: var(--eg-font);
+  padding: 7px 10px; border-radius: 4px; cursor: pointer; text-align: left;
+}
+.eg-menu-item:hover:not([disabled]), .eg-menu-item:focus-visible { background: var(--eg-selection-bg); outline: none; }
+.eg-menu-item[disabled] { color: var(--eg-readonly-fg); cursor: default; }
+.eg-menu-item kbd { font: 10px var(--eg-font); color: var(--eg-readonly-fg); }
+.eg-menu-sep { height: 1px; background: var(--eg-grid-line); margin: 4px 6px; }
+
+/* ---- Server-side: righe in caricamento ---- */
+.eg-row--loading .eg-cell { color: var(--eg-readonly-fg); font-style: italic; }
+@keyframes eg-pulse { 50% { opacity: .45; } }
+.eg-row--loading .eg-cell { animation: eg-pulse 1.2s ease-in-out infinite; }
+
+
+/* ---- Validazione inline ---- */
+.eg-cell.eg-invalid {
+  outline: 2px solid #c4314b;
+  outline-offset: -2px;
+  background: #fbe4e8;
+}
+
+/* ---- Drag & drop colonne ---- */
+.eg-drag-ghost {
+  position: absolute; z-index: 50; pointer-events: none;
+  background: var(--eg-header-bg); color: var(--eg-header-fg);
+  border: 1px solid var(--eg-accent); border-radius: 5px;
+  padding: 5px 12px; font: 600 12px var(--eg-font, sans-serif);
+  box-shadow: 0 6px 18px rgba(0,0,0,.18); opacity: .92;
+}
+.eg-drop-marker {
+  position: absolute; z-index: 49; top: 0; width: 3px; pointer-events: none;
+  background: var(--eg-accent); height: 100%;
+  display: none;
+}
+
+/* ---- Tree data ---- */
+.eg-tree-toggle { font-size: 12px; }
+[aria-level] .eg-cell:first-of-type { font-variant-numeric: tabular-nums; }
+
+/* ---- Touch ---- */
+.eg-root { touch-action: manipulation; } /* niente ritardo doppio-tap zoom */
+.eg-fill-handle { touch-action: none; }

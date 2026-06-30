@@ -1,0 +1,25 @@
+{
+  "name": "exceltable-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@angular/core": "^17.3.12",
+    "@playwright/test": "^1.60.0",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "esbuild": "^0.27.2",
+    "jsdom": "^29.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "rxjs": "^7.8.2",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "test": "node tests/run.mjs",
+    "e2e": "playwright test",
+    "e2e:update": "playwright test --update-snapshots"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "@exceltable/angular",
+  "version": "0.1.0",
+  "description": "Angular wrapper for @exceltable/core (standalone component, zone-less rendering)",
+  "peerDependencies": { "@angular/core": ">=15" },
+  "dependencies": { "@exceltable/core": "0.1.0" },
+  "license": "MIT"
+}

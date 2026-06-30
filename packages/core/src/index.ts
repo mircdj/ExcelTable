@@ -1,0 +1,21 @@
+/** @exceltable/core — public entry point. */
+export { Grid } from './grid';
+export { Emitter } from './events';
+export { makeSeries, parseValue, formatValue } from './values';
+export { inferColumns, getPath, setPath } from './infer';
+export type { InferOptions, InferResult } from './infer';
+export { exportXlsx, importXlsx } from './excel';
+export { pivot } from './pivot';
+export type { PivotConfig, PivotResult, PivotValueDef, PivotAgg } from './pivot';
+export { parseFormula, evaluate, FormulaEngine, FormulaError, isFormula } from './formula';
+export type { Ast, FVal, EvalContext } from './formula';
+export { ServerSource } from './serverside';
+export { IT, EN, interpolate } from './i18n';
+export type { Strings } from './i18n';
+export { attachOfflinePersistence } from './offline';
+export type { OfflineOptions, OfflineHandle, OfflineStorage, PendingChange } from './offline';
+export { attachAuditTrail } from './audit';
+export type { AuditOptions, AuditHandle, AuditEntry } from './audit';
+export type { ServerSideOptions, ServerSideParams, ServerSideResult } from './serverside';
+export type { ImportedSheet } from './excel';
+export type * from './types';

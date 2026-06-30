@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<style id="theme"></style>
+<style>
+  body { margin: 0; font-family: 'Segoe UI', sans-serif; }
+  #grid { width: 1100px; height: 600px; margin: 16px; }
+</style>
+</head>
+<body>
+<div id="grid"></div>
+<script src="../../packages/core/dist/exceltable.iife.js"></script>
+<script>
+  // Tema inline (il file CSS è accanto al bundle)
+  fetch('../../packages/core/src/theme.css').then(r => r.text()).then(css => {
+    document.getElementById('theme').textContent = css;
+    window.__themeReady = true;
+  });
+
+  /** Crea una griglia di test deterministica. I test chiamano makeGrid(preset). */
+  window.makeGrid = (preset = 'base', extra = {}) => {
+    window.grid?.destroy();
+    const rows = (n) => Array.from({ length: n }, (_, i) => ({
+      id: 'R' + String(i).padStart(4, '0'),
+      nome: ['Rossi','Bianchi','Verdi','Neri','Gialli'][i % 5] + ' ' + i,
+      zona: ['Nord','Sud','Ovest'][i % 3],
+      ore: (i * 7) % 50,
+      importo: 100 + i * 3.5,
+      attivo: i % 2 === 0,
+      data: '2026-0' + (1 + (i % 9)) + '-1' + (i % 9),
+      materiali: i % 4 === 0 ? [{ codice: 'M' + i, qta: i + 1 }, { codice: 'N' + i, qta: 2 }] : [],
+    }));
+    const presets = {
+      base: {
+        columns: [
+          { field: 'id', pinned: 'left', editable: false, width: 110 },
+          { field: 'nome', width: 160 },
+          { field: 'zona', type: 'select', options: ['Nord','Sud','Ovest'], width: 110 },
+          { field: 'ore', type: 'number', width: 90 },
+          { field: 'importo', type: 'number', width: 120, aggFunc: 'sum' },
+          { field: 'attivo', type: 'boolean', width: 90 },
+          { field: 'data', type: 'date', width: 120 },
+          { field: 'note', width: 380 },
+        ],
+        data: rows(200),
+        getRowId: (r) => r.id,
+      },
+      detail: {
+        columns: [
+          { field: 'id', pinned: 'left', editable: false, width: 110 },
+          { field: 'nome', width: 200 },
+        ],
+        data: rows(50),
+        getRowId: (r) => r.id,
+        masterDetail: { field: 'materiali' },
+      },
+      groups: {
+        columns: [
+          { field: 'zona', width: 130 },
+          { field: 'nome', width: 180 },
+          { field: 'importo', type: 'number', width: 140, aggFunc: 'sum' },
+        ],
+        data: rows(60),
+        getRowId: (r) => r.id,
+        groupBy: ['zona'],
+      },
+    };
+    window.grid = new ExcelTable.Grid(
+      document.getElementById('grid'),
+      Object.assign(presets[preset], extra),
+    );
+    return true;
+  };
+</script>
+</body>
+</html>
